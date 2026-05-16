@@ -120,6 +120,21 @@ https://www.omdbapi.com/?apikey=TU_KEY&i=tt3784006
 - Si una key se expone, revócala y genera una nueva en OMDb.
 - El archivo `.env.example` solo contiene placeholders.
 
+## Despliegue en Vercel
+
+1. Sube el repositorio a GitHub y conéctalo en [vercel.com](https://vercel.com).
+2. En **Project → Settings → Environment Variables**, agrega:
+
+| Variable | Entornos |
+|----------|----------|
+| `OMDB_API_KEY` | Production, Preview, Development |
+| `NEXT_PUBLIC_OMDB_API_KEY` | Production, Preview, Development |
+
+3. Usa el mismo valor de tu key de [OMDb](https://www.omdbapi.com/apikey.aspx) en ambas variables.
+4. Vuelve a desplegar (**Redeploy**) después de guardar las variables.
+
+> Sin `OMDB_API_KEY`, el build en Vercel puede completarse, pero `/movies` no mostrará películas populares hasta configurar la key.
+
 ## Autor
 
 Laboratorio — Tecsup · Desarrollo de Aplicaciones Web Avanzado

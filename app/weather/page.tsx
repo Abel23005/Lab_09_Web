@@ -1,6 +1,8 @@
 import axios from 'axios'
 import ClientWeatherWidget from './ClientWeatherWidget'
 
+export const dynamic = 'force-dynamic'
+
 interface WeatherData {
   current_weather: {
     temperature: number
@@ -9,12 +11,20 @@ interface WeatherData {
   }
 }
 
-async function getWeatherServer() {
-  // Lima, Perú
-  const response = await axios.get(
-    'https://api.open-meteo.com/v1/forecast?latitude=-12.04&longitude=-77.03&current_weather=true'
-  )
-  return response.data as WeatherData
+const FALLBACK_WEATHER: WeatherData = {
+  current_weather: { temperature: 0, windspeed: 0, weathercode: 0 },
+}
+
+async function getWeatherServer(): Promise<WeatherData> {
+  try {
+    const response = await axios.get(
+      'https://api.open-meteo.com/v1/forecast?latitude=-12.04&longitude=-77.03&current_weather=true',
+      { timeout: 10000 }
+    )
+    return response.data as WeatherData
+  } catch {
+    return FALLBACK_WEATHER
+  }
 }
 
 export default async function WeatherDashboard() {

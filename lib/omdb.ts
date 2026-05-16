@@ -32,10 +32,8 @@ export interface OmdbDetail {
   Error?: string
 }
 
-export function getServerApiKey(): string {
-  const key = process.env.OMDB_API_KEY
-  if (!key) throw new Error('OMDB_API_KEY no configurada en .env.local')
-  return key
+export function getServerApiKey(): string | null {
+  return process.env.OMDB_API_KEY?.trim() || null
 }
 
 export async function searchMovies(query: string, apiKey: string): Promise<OmdbSearchItem[]> {

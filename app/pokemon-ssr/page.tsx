@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+export const dynamic = 'force-dynamic'
+
 interface Pokemon {
   name: string
   sprites: {
@@ -12,10 +14,22 @@ interface Pokemon {
   }>
 }
 
+const FALLBACK_POKEMON: Pokemon = {
+  name: 'pikachu',
+  sprites: { front_default: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png' },
+  types: [{ type: { name: 'electric' } }],
+}
+
 async function getPokemon(): Promise<Pokemon> {
-  const randomId = Math.floor(Math.random() * 150) + 1
-  const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${randomId}`)
-  return response.data;
+  try {
+    const randomId = Math.floor(Math.random() * 150) + 1
+    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${randomId}`, {
+      timeout: 10000,
+    })
+    return response.data
+  } catch {
+    return FALLBACK_POKEMON
+  }
 }
 
 export default async function PokemonSSR() {

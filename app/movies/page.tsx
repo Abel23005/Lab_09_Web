@@ -2,19 +2,27 @@ import { getServerApiKey, searchMovies } from '@/lib/omdb'
 import MovieCard from './MovieCard'
 import MovieSearch from './MovieSearch'
 
+export const dynamic = 'force-dynamic'
+
 async function getPopularMovies() {
   const apiKey = getServerApiKey()
-  const [marvel, batman, star] = await Promise.all([
-    searchMovies('marvel', apiKey),
-    searchMovies('batman', apiKey),
-    searchMovies('star', apiKey),
-  ])
+  if (!apiKey) return []
 
-  const merged = [...marvel, ...batman, ...star]
-  const unique = merged.filter(
-    (movie, index, arr) => arr.findIndex((m) => m.imdbID === movie.imdbID) === index
-  )
-  return unique.slice(0, 12)
+  try {
+    const [marvel, batman, star] = await Promise.all([
+      searchMovies('marvel', apiKey),
+      searchMovies('batman', apiKey),
+      searchMovies('star', apiKey),
+    ])
+
+    const merged = [...marvel, ...batman, ...star]
+    const unique = merged.filter(
+      (movie, index, arr) => arr.findIndex((m) => m.imdbID === movie.imdbID) === index
+    )
+    return unique.slice(0, 12)
+  } catch {
+    return []
+  }
 }
 
 export default async function MoviesPage() {
@@ -49,7 +57,7 @@ export default async function MoviesPage() {
             </div>
           ) : (
             <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-amber-200">
-              No se pudieron cargar películas populares. Verifica tu API key en .env.local
+              No se pudieron cargar películas populares. Configura OMDB_API_KEY en Vercel o .env.local
             </p>
           )}
 
